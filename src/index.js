@@ -1,6 +1,13 @@
 import { initSwipers, swipers } from './utils/globalFunctions';
 import { disableScroll } from './utils/globals';
 
+// GSAP Fix
+gsap.registerPlugin(ScrollTrigger);
+$('img').each(function () {
+  $(this).removeAttr('loading');
+  ScrollTrigger.refresh();
+});
+
 // --- Swipers
 const swiperInstances = [
   ['.hp-reviews', '.hp-reviews_wrap', 'reviews', { slidesPerView: 1, spaceBetween: 48 }, 'mobile'],
@@ -19,7 +26,6 @@ ScrollTrigger.matchMedia({
           trigger: $(this),
           start: 'top bottom',
           end: 'bottom top',
-          markers: true,
           scrub: 1,
         },
       });

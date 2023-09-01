@@ -272,7 +272,6 @@ $(document).ready(function () {
         trigger: $(this),
         start: 'top bottom',
         end: 'bottom top',
-        markers: true,
         scrub: 1,
       },
     });
@@ -295,7 +294,6 @@ $(document).ready(function () {
         trigger: $(this),
         start: 'top bottom',
         end: 'bottom top',
-        markers: true,
         scrub: 1,
       },
     });
@@ -358,10 +356,10 @@ $(document).ready(function () {
     ],
     ['.hp-story', '.hp-cards', 'experience-cards', { slidesPerView: 1 }, 'mobile'],
     [
-      '.section_hp-partners',
-      '.hp-reviews_wrap',
-      'reviews',
-      { slidesPerView: 1, spaceBetween: 48 },
+      '.section_hp-dashboard',
+      '.hp-dashboard_slider',
+      'dashboard-slier',
+      { slidesPerView: 1 },
       'mobile',
     ],
   ];
