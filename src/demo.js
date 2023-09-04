@@ -32,11 +32,17 @@ $(document).ready(() => {
   };
   */
 
+  let hbstID = window.location.pathname.includes('/en')
+    ? 'a11bc6c9-2078-4d9f-a48f-423b9a14d849' // EN
+    : '15d2b3b0-0cf0-4219-aab3-eb433ad8c58f'; // DE
+
+  console.log(hbstID);
+
   // Initialize the HubSpot form
   hbspt.forms.create({
     region: 'eu1',
     portalId: '25736014',
-    formId: '15d2b3b0-0cf0-4219-aab3-eb433ad8c58f',
+    formId: hbstID,
     target: '#hbst-form',
     onFormReady: onFormReadyCallback,
   });

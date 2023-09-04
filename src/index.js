@@ -8,6 +8,43 @@ $('img').each(function () {
   ScrollTrigger.refresh();
 });
 
+// -- Navbar Anim
+$('.navbar').each(function () {
+  let mainParallax = gsap.timeline({
+    scrollTrigger: {
+      trigger: $(this),
+      start: 'top top',
+      end: 'bottom top',
+      scrub: 1,
+    },
+  });
+
+  mainParallax.fromTo(
+    $('.navbar_pattern'),
+    {
+      rotation: 0,
+      transformOrigin: 'left 50%',
+    },
+    {
+      rotation: -30,
+      transformOrigin: '0% 100%',
+    }
+  );
+  mainParallax.fromTo(
+    $('.navbar_symbol'),
+    {
+      opacity: 0,
+    },
+    {
+      opacity: 1,
+    },
+    '<'
+  );
+});
+$('.navbar_menu-button').on('click', function () {
+  disableScroll();
+});
+
 // --- Swipers
 const swiperInstances = [
   ['.hp-reviews', '.hp-reviews_wrap', 'reviews', { slidesPerView: 1, spaceBetween: 48 }, 'mobile'],

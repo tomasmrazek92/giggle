@@ -181,6 +181,7 @@ $(document).ready(function () {
     platforms.each(function (index) {
       var self = $(this);
       const state = Flip.getState($(this));
+      const randomClass = gsap.utils.random(['1', '2', '3']);
 
       $(this).addClass('moved');
       const flip = Flip.from(state, {
@@ -190,11 +191,12 @@ $(document).ready(function () {
         absolute: true,
         onComplete: function () {
           self.css({ opacity: '1', transform: 'none' });
+          self.addClass('float' + randomClass);
         },
       });
 
       // Add each flip animation to the main timeline
-      main.add(flip, currentDuration + index * 0.2); // The second parameter can be the position in the timeline
+      main.add(flip, currentDuration + index * 0.2);
     });
   });
 
@@ -219,7 +221,8 @@ $(document).ready(function () {
       $($element).each(function () {
         const Cont = { val: 1 };
         const originalText = $(this).text();
-        const targetValue = parseFloat(originalText);
+        const cleanedText = originalText.replace(/\s+/g, '');
+        const targetValue = parseFloat(cleanedText);
         const decimalPlaces = (originalText.split('.')[1] || []).length;
 
         if (!isNaN(targetValue)) {
