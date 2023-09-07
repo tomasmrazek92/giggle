@@ -97,12 +97,11 @@ function validateOtherInputs(input) {
 
 // Hangle Empty Inputs
 function handleEmptyRequiredInput(input) {
+  let businessMsg = window.location.pathname.includes('/en')
+    ? 'Please select a business location from the search results.' // EN
+    : 'Bitte wählen Sie einen Unternehmensstandort aus den Suchergebnissen aus.'; // DE
   if ($(input).attr('name') === 'hotel-name') {
-    toggleValidationMsg(
-      $(input),
-      true,
-      'Please select a business location from the search results.'
-    );
+    toggleValidationMsg($(input), true, businessMsg);
   }
   toggleValidationMsg($(input), true);
   return false;
