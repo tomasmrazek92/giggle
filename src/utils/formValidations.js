@@ -21,6 +21,8 @@ function validateGooglePlace(input) {
 // Validate CheckPlaceType
 let hasRun = false;
 function checkPlaceType(input) {
+  return true;
+  /*
   if (hasRun) {
     hasRun = false;
     return true;
@@ -40,6 +42,7 @@ function checkPlaceType(input) {
 
   hasRun = true;
   return isValid;
+  */
 }
 
 // Validate Selects
