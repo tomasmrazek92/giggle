@@ -117,7 +117,14 @@ export const validateInput = (element) => {
       if ($(input).is('[type="email"]')) {
         isValidAll = validateEmail(input);
       } else if ($(input).attr('name') === 'hotel-name') {
-        isValidAll = validateGooglePlace(input);
+        // Check if the input has atleast 3 characters and not containing only spaces before running validation
+        var inputValue = $(input).val();
+        if (inputValue.length >= 3 && inputValue[0] !== ' ') {
+          isValidAll = validateGooglePlace(input);
+        } else {
+          toggleValidationMsg($(input), true);
+          isValidAll = false;
+        }
       } else if ($(input).is('select')) {
         isValidAll = validateSelect(input);
       } else if ($(input).is('[type="checkbox"], [type="radio"]')) {
