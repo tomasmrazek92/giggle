@@ -11,32 +11,14 @@ import {
 $(document).ready(() => {
   // --- Preload Data from Google API ---
   initGooglePlaceAutocomplete();
-  /* Custom Select
-  $('.nice-select li').on('click', function () {
-    $('.nice-select .current').css('color', 'white');
-  });
-  */
 
   // -- Forms
   let wfForm = $('#demo-form');
   let hsForm;
 
-  /* Handle Submit
-  const successSubmit = () => {
-    gtag('event', 'ecap', {
-      event_category: 'lead',
-      event_label: 'ecap',
-      value: 1,
-    });
-    window.location.href = 'https://www.owner.com/funnel-demo-requested';
-  };
-  */
-
   let hbstID = window.location.pathname.includes('/en')
     ? 'a11bc6c9-2078-4d9f-a48f-423b9a14d849' // EN
     : '15d2b3b0-0cf0-4219-aab3-eb433ad8c58f'; // DE
-
-  console.log(hbstID);
 
   // Initialize the HubSpot form
   hbspt.forms.create({

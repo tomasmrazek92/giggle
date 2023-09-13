@@ -72,12 +72,16 @@ const initGooglePlaceAutocomplete = () => {
 
   const gpaOptions = {};
 
+  let isPlaceChanged = false;
+
   $('input[name="hotel-name"]').each(function () {
     const autocomplete = new google.maps.places.Autocomplete(this, gpaOptions);
     const self = $(this);
 
+    // Handling Google Place API Change
     autocomplete.addListener('place_changed', function () {
       console.log('place-changed');
+      isPlaceChanged = true;
       const place = autocomplete.getPlace();
       const value = self.val();
 
@@ -89,6 +93,16 @@ const initGooglePlaceAutocomplete = () => {
       setItem('hotel-value', value);
       setItem(restaurantObject, place);
       setInputElementValue('hotel-name', getItem('hotel-value'));
+    });
+
+    // Handling plain text inputs
+    self.on('blur', function () {
+      if (!isPlaceChanged) {
+        const plainTextValue = self.val();
+        $('input[type="hidden"]').val(''); // Clear all previous values
+        $('input[name="name"]').val(plainTextValue); // Or any other handling you want for plain text
+      }
+      isPlaceChanged = false; // Reset the flag for next operation
     });
   });
 };

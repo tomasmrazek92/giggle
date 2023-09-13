@@ -390,6 +390,7 @@ $('.hp-story_item').on('click', function () {
 });
 
 $('#closeModal').on('click', function () {
+  console.log('Click');
   $('.hp-story_modal').stop().fadeOut();
   disableScroll();
 });

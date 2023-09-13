@@ -122,8 +122,7 @@ export const validateInput = (element) => {
         if (inputValue.length >= 3 && inputValue[0] !== ' ') {
           isValidAll = validateGooglePlace(input);
         } else {
-          toggleValidationMsg($(input), true);
-          isValidAll = false;
+          isValidAll = handleEmptyRequiredInput(input);
         }
       } else if ($(input).is('select')) {
         isValidAll = validateSelect(input);
