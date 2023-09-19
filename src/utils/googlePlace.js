@@ -96,7 +96,7 @@ const initGooglePlaceAutocomplete = () => {
     });
 
     // Handling plain text inputs
-    self.on('blur', function () {
+    self.on('change', function () {
       if (!isPlaceChanged) {
         const plainTextValue = self.val();
         $('input[type="hidden"]').val(''); // Clear all previous values

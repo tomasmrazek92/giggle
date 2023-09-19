@@ -132,12 +132,12 @@ export const handleHubspotForm = (form) => {
   setTimeout(() => {
     // Run the Validation and stop the animation
     isError = mirrorHS(form);
-    clearInterval(intervalId);
-    enableButton();
-
     // Check condition and submit the form otherwise
     if (!isError) {
       form.find('input[type=submit]').trigger('click');
+    } else {
+      clearInterval(intervalId);
+      enableButton();
     }
   }, 3000);
 };
