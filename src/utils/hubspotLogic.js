@@ -135,6 +135,10 @@ export const handleHubspotForm = (form) => {
     // Check condition and submit the form otherwise
     if (!isError) {
       form.find('input[type=submit]').trigger('click');
+      setTimeout(() => {
+        clearInterval(intervalId);
+        enableButton();
+      }, 3000);
     } else {
       clearInterval(intervalId);
       enableButton();
