@@ -19,8 +19,10 @@ $(document).ready(() => {
   let hbstID;
 
   const url = window.location.href;
-  const isStartDomain = url.includes('https://start.giggle.tips/');
-  const isHotelDomain = url.includes('https://hotel.giggle.tips/');
+  const isStartDomain =
+    url.includes('https://start.giggle.tips/') || url.includes('https://giggle-lp-new.webflow.io/');
+  const isHotelDomain =
+    url.includes('https://hotel.giggle.tips/') || url.includes('https://giggle-new.webflow.io/;');
   const isEnglishPath = window.location.pathname.includes('/en');
 
   if (isStartDomain) {
@@ -31,9 +33,11 @@ $(document).ready(() => {
   } else if (isHotelDomain) {
     // Hotel
     hbstID = isEnglishPath
-      ? '63e8d382-d758-406b-91ad-6ee8aa2b2f93' // EN
-      : 'b52a0567-ff57-44e8-882c-018c0174fd5c'; // DE
+      ? 'b52a0567-ff57-44e8-882c-018c0174fd5c' // EN
+      : '63e8d382-d758-406b-91ad-6ee8aa2b2f93'; // DE
   }
+
+  console.log(hbstID);
 
   // Initialize the HubSpot form
   hbspt.forms.create({
