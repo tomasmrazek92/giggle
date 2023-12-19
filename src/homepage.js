@@ -265,6 +265,10 @@ $('[animation-type="3"]').each(function () {
   const animateCounter = ($element) => {
     let tweens = [];
 
+    const formatNumberWithCommas = (number) => {
+      return number.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',');
+    };
+
     $($element).each(function () {
       const Cont = { val: 1 };
       const originalText = $(this).text();
