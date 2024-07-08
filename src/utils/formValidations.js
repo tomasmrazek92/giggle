@@ -19,30 +19,20 @@ function validateGooglePlace(input) {
 }
 
 // Validate CheckPlaceType
-let hasRun = false;
 function checkPlaceType(input) {
-  return true;
-  /*
-  if (hasRun) {
-    hasRun = false;
-    return true;
-  }
-
   let isValid = checkIfRestaurant();
 
   if (!isValid) {
     toggleValidationMsg(
       $(input),
       true,
-      'Are you sure this is correct? Please update your entry to a recognized hotel.'
+      'Bitte wähle euer Unternehmen aus, um kostenfrei zu starten.'
     );
   } else {
     toggleValidationMsg($(input), false);
   }
 
-  hasRun = true;
   return isValid;
-  */
 }
 
 // Validate Selects

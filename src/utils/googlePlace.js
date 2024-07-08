@@ -97,11 +97,12 @@ const initGooglePlaceAutocomplete = () => {
 
     // Handling plain text inputs
     self.on('change', function () {
-      if (!isPlaceChanged) {
-        const plainTextValue = self.val();
-        $('input[type="hidden"]').val(''); // Clear all previous values
-        $('input[name="name"]').val(plainTextValue); // Or any other handling you want for plain text
-      }
+      const plainTextValue = self.val();
+      localStorage.removeItem('hotel-value');
+      localStorage.removeItem(restaurantObject);
+      $('input[type="hidden"]').val(''); // Clear all previous values
+      $('input[name="name"]').val(plainTextValue); // Or any other handling you want for plain text
+
       isPlaceChanged = false; // Reset the flag for next operation
     });
   });
@@ -110,15 +111,35 @@ const initGooglePlaceAutocomplete = () => {
 const checkIfRestaurant = () => {
   // Parse the localStorage object into a JavaScript object
   const placeObject = JSON.parse(localStorage.getItem(restaurantObject));
+  const placeTypes = placeObject ? placeObject.types : '';
 
   // Check if the types array includes at least one of the valid types
-  const validTypes = ['bar', 'cafe', 'bakery', 'food', 'restaurant'];
-  for (let i = 0; i < validTypes.length; i++) {
-    if (placeObject.types.includes(validTypes[i])) {
-      return true;
+  const validTypes = [
+    'amusement_park',
+    'gym',
+    'casino',
+    'lodging',
+    'night_club',
+    'restaurant',
+    'spa',
+    'tourist_attraction',
+    'travel_agency',
+  ];
+
+  /*
+  if (placeTypes.length) {
+    for (let i = 0; i < validTypes.length; i++) {
+      if (placeTypes.includes(validTypes[i])) {
+        return true;
+      }
     }
   }
-  return true;
+    */
+
+  if (placeObject) {
+    return true;
+  }
+  return false;
 };
 
 export {
