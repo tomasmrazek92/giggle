@@ -23,11 +23,7 @@ function checkPlaceType(input) {
   let isValid = checkIfRestaurant();
 
   if (!isValid) {
-    toggleValidationMsg(
-      $(input),
-      true,
-      'Bitte wähle euer Unternehmen aus, um kostenfrei zu starten.'
-    );
+    toggleValidationMsg($(input), true);
   } else {
     toggleValidationMsg($(input), false);
   }
@@ -87,11 +83,8 @@ function validateOtherInputs(input) {
 
 // Hangle Empty Inputs
 function handleEmptyRequiredInput(input) {
-  let businessMsg = window.location.pathname.includes('/en')
-    ? 'Please select a business location from the search results.' // EN
-    : 'Bitte wählen Sie einen Unternehmensstandort aus den Suchergebnissen aus.'; // DE
   if ($(input).attr('name') === 'hotel-name') {
-    toggleValidationMsg($(input), true, businessMsg);
+    toggleValidationMsg($(input), true);
   }
   toggleValidationMsg($(input), true);
   return false;

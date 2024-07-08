@@ -22,7 +22,7 @@ $(document).ready(() => {
   const isStartDomain =
     url.includes('https://start.giggle.tips/') || url.includes('https://giggle-lp-new.webflow.io/');
   const isHotelDomain =
-    url.includes('https://hotel.giggle.tips/') || url.includes('https://giggle-new.webflow.io/;');
+    url.includes('https://hotel.giggle.tips/') || url.includes('https://giggle-new.webflow.io/');
   const isEnglishPath = window.location.pathname.includes('/en');
 
   if (isStartDomain) {
