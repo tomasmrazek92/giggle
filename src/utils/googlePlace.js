@@ -115,18 +115,25 @@ const checkIfRestaurant = () => {
 
   // Check if the types array includes at least one of the valid types
   const validTypes = [
+    'airport',
     'amusement_park',
-    'gym',
+    'art_gallery',
+    'bakery',
+    'bar',
+    'beauty_salon',
+    'bowling_alley',
+    'cafe',
+    'campground',
     'casino',
+    'gym',
     'lodging',
     'night_club',
-    'restaurant',
-    'spa',
-    'tourist_attraction',
     'travel_agency',
+    'tourist_attraction',
+    'spa',
+    'restaurant',
   ];
 
-  /*
   if (placeTypes.length) {
     for (let i = 0; i < validTypes.length; i++) {
       if (placeTypes.includes(validTypes[i])) {
@@ -134,11 +141,7 @@ const checkIfRestaurant = () => {
       }
     }
   }
-    */
 
-  if (placeObject) {
-    return true;
-  }
   return false;
 };
 
