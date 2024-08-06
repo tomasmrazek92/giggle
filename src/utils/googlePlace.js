@@ -113,36 +113,26 @@ const checkIfRestaurant = () => {
   const placeObject = JSON.parse(localStorage.getItem(restaurantObject));
   const placeTypes = placeObject ? placeObject.types : '';
 
-  // Check if the types array includes at least one of the valid types
+  // Check if the types array includes at least one of the valid types and return false if true
   const validTypes = [
-    'airport',
-    'amusement_park',
-    'art_gallery',
-    'bakery',
-    'bar',
-    'beauty_salon',
-    'bowling_alley',
-    'cafe',
-    'campground',
-    'casino',
-    'gym',
-    'lodging',
-    'night_club',
-    'travel_agency',
-    'tourist_attraction',
-    'spa',
-    'restaurant',
+    'country',
+    'continent',
+    'locality',
+    'town_square',
+    'street_address',
+    'street_number',
+    'natural_feature',
+    'establishment',
   ];
 
-  if (placeTypes.length) {
-    for (let i = 0; i < validTypes.length; i++) {
-      if (placeTypes.includes(validTypes[i])) {
-        return true;
-      }
+  // Check if placeTypes includes any valid type
+  for (let i = 0; i < validTypes.length; i++) {
+    if (placeTypes.includes(validTypes[i])) {
+      return false;
     }
   }
 
-  return false;
+  return true;
 };
 
 export {
