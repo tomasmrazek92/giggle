@@ -122,7 +122,6 @@ const checkIfRestaurant = () => {
     'street_address',
     'street_number',
     'natural_feature',
-    'establishment',
   ];
 
   // Check if placeTypes includes any valid type
