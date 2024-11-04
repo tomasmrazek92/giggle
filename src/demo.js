@@ -26,10 +26,14 @@ $(document).ready(() => {
   const isEnglishPath = window.location.pathname.includes('/en');
 
   if (isStartDomain) {
-    // Start
-    hbstID = isEnglishPath
-      ? 'a11bc6c9-2078-4d9f-a48f-423b9a14d849' // EN
-      : '15d2b3b0-0cf0-4219-aab3-eb433ad8c58f'; // DE
+    if (typeof isDl !== 'undefined' && isDl === true) {
+      hbstID = 'b202ae0b-837f-47a5-8206-1e194f832f55'; // DE
+    } else {
+      // Start
+      hbstID = isEnglishPath
+        ? 'a11bc6c9-2078-4d9f-a48f-423b9a14d849' // EN
+        : '15d2b3b0-0cf0-4219-aab3-eb433ad8c58f'; // DE
+    }
   } else if (isHotelDomain) {
     // Hotel
     hbstID = isEnglishPath
@@ -37,7 +41,7 @@ $(document).ready(() => {
       : '63e8d382-d758-406b-91ad-6ee8aa2b2f93'; // DE
   }
 
-  console.log(hbstID);
+  // console.log(hbstID);
 
   // Initialize the HubSpot form
   hbspt.forms.create({
@@ -69,6 +73,7 @@ $(document).ready(() => {
     website: 'website',
     url: 'google_places_url',
     place_types: ['industry'],
+    voucher_code: 'voucher_code',
     // ...
   };
 
