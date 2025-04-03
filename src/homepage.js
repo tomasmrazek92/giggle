@@ -39,6 +39,22 @@ const swiperInstances = [
   ],
   ['.hp-story', '.hp-cards', 'experience-cards', { slidesPerView: 1 }, 'mobile'],
   [
+    '.qa-videos_wrap',
+    '.qa-videos_slider',
+    'qa-videos',
+    {
+      slidesPerView: 'auto',
+      spaceBetween: 64,
+      centeredSlides: true,
+      loop: true,
+      mousewheel: {
+        enabled: true,
+        forceToAxis: true,
+      },
+    },
+    'all',
+  ],
+  [
     '.section_hp-dashboard',
     '.hp-dashboard_slider',
     'dashboard-slier',
