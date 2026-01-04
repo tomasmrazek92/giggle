@@ -15,7 +15,6 @@ export const createResponsiveSwiper = (
   let elements = $(componentSelector);
 
   if (elements.length === 0) {
-    console.log('No elements found for selector', componentSelector); // Step 2
     return;
   }
 
@@ -35,13 +34,20 @@ export const createResponsiveSwiper = (
         prevEl: `${arrows}.prev.${uniqueKey}`,
         nextEl: `${arrows}.next.${uniqueKey}`,
       },
-      pagination: {
+      mousewheel: {
+        enabled: true,
+        forceToAxis: true,
+      },
+    });
+
+    if (!options.pagination) {
+      swiperOptions.pagination = {
         el: `${pagination}.${uniqueKey}`,
         type: 'bullets',
         bulletActiveClass: 'w-active',
         bulletClass: 'w-slider-dot',
-      },
-    });
+      };
+    }
 
     swipers[classSelector] = swipers[classSelector] || {};
     swipers[classSelector][uniqueKey] = swipers[classSelector][uniqueKey] || {};

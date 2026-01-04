@@ -1,99 +1,353 @@
-import { validateInput } from '$utils/formValidations';
+import { toggleValidationMsg } from '$utils/formValidations';
 import { setInputElementValue } from '$utils/globals';
-import { initGooglePlaceAutocomplete } from '$utils/googlePlace';
-import {
-  fillHubSpot,
-  handleHubspotForm,
-  onFormReadyCallback,
-  waitForFormReady,
-} from '$utils/hubspotLogic';
+import { getItem, setItem } from '$utils/localStorage';
 
-$(document).ready(() => {
-  // --- Preload Data from Google API ---
-  initGooglePlaceAutocomplete();
+const restaurantObject = 'hotel';
 
-  // -- Forms
-  let wfForm = $('#demo-form');
-  let hsForm;
+const setAddressComponents = (googlePlace, componentForm) => {
+  let route = '';
+  let streetNumber = '';
 
-  let hbstID;
+  googlePlace.address_components.forEach((component) => {
+    const addressType = component.types[0];
+    const type = componentForm.address_components[addressType];
 
-  const url = window.location.href;
-  const isStartDomain =
-    url.includes('https://start.giggle.tips/') || url.includes('https://giggle-lp-new.webflow.io/');
-  const isHotelDomain =
-    url.includes('https://hotel.giggle.tips/') || url.includes('https://giggle-new.webflow.io/');
-  const isEnglishPath = window.location.pathname.includes('/en');
-
-  if (isStartDomain) {
-    if (typeof isDl !== 'undefined' && isDl === true) {
-      hbstID = 'b202ae0b-837f-47a5-8206-1e194f832f55'; // DE
-    } else {
-      // Start
-      hbstID = isEnglishPath
-        ? 'a11bc6c9-2078-4d9f-a48f-423b9a14d849' // EN
-        : '15d2b3b0-0cf0-4219-aab3-eb433ad8c58f'; // DE
+    if (type) {
+      const val = component[type];
+      if (addressType === 'route') route = val;
+      else if (addressType === 'street_number') streetNumber = val;
+      else setInputElementValue(addressType, val);
     }
-  } else if (isHotelDomain) {
-    // Hotel
-    hbstID = isEnglishPath
-      ? 'b52a0567-ff57-44e8-882c-018c0174fd5c' // EN
-      : '63e8d382-d758-406b-91ad-6ee8aa2b2f93'; // DE
-  }
-
-  // console.log(hbstID);
-
-  // Initialize the HubSpot form
-  hbspt.forms.create({
-    region: 'eu1',
-    portalId: '25736014',
-    formId: hbstID,
-    target: '#hbst-form',
-    onFormReady: onFormReadyCallback,
   });
 
-  // Call the waitForFormReady function
-  waitForFormReady().then(function (form) {
-    hsForm = $(form);
-  });
+  setInputElementValue('hotel-address', `${streetNumber} ${route}`);
+};
 
-  // -- Inputs
-  const inputMapping = {
-    name: ['company', 'new_form_hotel_name'],
-    international_phone_number: ['phone'],
-    'hotel-address': ['address'],
-    locality: ['city'],
-    administrative_area_level_1: ['state', '0-2/state'],
-    postal_code: ['zip'],
-    country: ['country'],
-    'first-name': 'firstname',
-    'last-name': 'lastname',
-    cellphone: 'mobilephone',
-    email: 'email',
-    website: 'website',
-    url: 'google_places_url',
-    place_types: ['industry'],
-    voucher_code: 'voucher_code',
-    // ...
+const setTypes = (googlePlace) => {
+  if (!googlePlace.types) return;
+  const typesAsString = googlePlace.types.join(', ');
+  setInputElementValue('place_types', typesAsString);
+};
+
+const setOtherComponents = (googlePlace, componentForm) => {
+  Object.keys(componentForm).forEach((key) => {
+    if (key === 'address_components') return;
+    const value = googlePlace[key];
+    if (value) setInputElementValue(key, value);
+  });
+};
+
+const setGooglePlaceDataToForm = (googlePlace) => {
+  if (!googlePlace) return;
+
+  const componentForm = {
+    name: '',
+    international_phone_number: '',
+    website: '',
+    place_id: '',
+    url: '',
+    rating: '',
+    user_ratings_total: '',
+    address_components: {
+      street_number: 'short_name',
+      route: 'long_name',
+      locality: 'long_name',
+      administrative_area_level_1: 'short_name',
+      country: 'short_name',
+      postal_code: 'short_name',
+    },
   };
 
-  // Submit Action
-  $('[data-form=submit-btn]').on('click', function (e) {
-    let button = $(this);
+  setAddressComponents(googlePlace, componentForm);
+  setTypes(googlePlace);
+  setOtherComponents(googlePlace, componentForm);
+};
 
-    e.preventDefault();
+const checkIfRestaurant = () => {
+  const placeObject = JSON.parse(localStorage.getItem(restaurantObject));
+  const placeTypes = placeObject ? placeObject.types : '';
 
-    let isValid = true;
+  const validTypes = [
+    'country',
+    'continent',
+    'locality',
+    'town_square',
+    'street_address',
+    'street_number',
+    'natural_feature',
+  ];
 
-    wfForm.find(':input:visible, select').each(function () {
-      let validate = validateInput($(this));
-      isValid = isValid && validate;
+  for (let i = 0; i < validTypes.length; i++) {
+    if (placeTypes.includes(validTypes[i])) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
+const initGooglePlaceAutocomplete = () => {
+  const hasForm = $('input[name="name"]').length > 0 || $('input[name="place_id"]').length > 0;
+
+  const googlePlaceFromStorage = getItem(restaurantObject);
+  if (googlePlaceFromStorage && hasForm) {
+    setGooglePlaceDataToForm(googlePlaceFromStorage);
+    setInputElementValue('hotel-name', getItem('hotel-value'));
+  }
+
+  let autocompleteService;
+  let placesService;
+  let placeId;
+  let selectedIndex = -1;
+  let currentPredictions = [];
+
+  const gpaOptions = {};
+
+  $('input[name="hotel-name"]').each(function () {
+    const $input = $(this);
+    const $predictionsList = $input.siblings('.predictions-container');
+
+    if (!$predictionsList.length) return;
+
+    const shouldRedirect = $input.data('redirect-url');
+
+    function redirectToGrader(placeId) {
+      if (!shouldRedirect || !placeId) return;
+
+      let redirectUrl = `${shouldRedirect}?placeid=${placeId}`;
+
+      let utmParams;
+      try {
+        utmParams = JSON.parse(sessionStorage.getItem('utmWebParams'));
+      } catch (e) {
+        utmParams = null;
+      }
+
+      if (utmParams && typeof utmParams === 'object') {
+        const paramStrings = [];
+        for (const key in utmParams) {
+          if (utmParams.hasOwnProperty(key)) {
+            paramStrings.push(`${encodeURIComponent(key)}=${encodeURIComponent(utmParams[key])}`);
+          }
+        }
+        if (paramStrings.length > 0) {
+          redirectUrl += `&${paramStrings.join('&')}`;
+        }
+      }
+
+      window.open(redirectUrl);
+    }
+
+    function initializeServices() {
+      if (window.google && window.google.maps) {
+        autocompleteService = new google.maps.places.AutocompleteService();
+        placesService = new google.maps.places.PlacesService(document.createElement('div'));
+      }
+    }
+
+    function handleInput(query) {
+      placeId = null;
+      selectedIndex = -1;
+
+      if (query.length > 0 && autocompleteService) {
+        const searchConfig = { input: query };
+
+        autocompleteService.getPlacePredictions(searchConfig, (predictions, status) => {
+          displayPredictions(predictions, status);
+
+          if (predictions && predictions.length > 0) {
+            setTimeout(() => {
+              if (
+                $predictionsList.is(':visible') &&
+                $predictionsList.find('.prediction-item').length > 0
+              ) {
+                highlightPrediction(0);
+              }
+            }, 50);
+          }
+        });
+      } else {
+        $predictionsList.html('').addClass('hidden');
+      }
+    }
+
+    function displayPredictions(predictions, status) {
+      $predictionsList.html('');
+      currentPredictions = [];
+
+      if (
+        status === google.maps.places.PlacesServiceStatus.OK &&
+        predictions &&
+        predictions.length > 0
+      ) {
+        currentPredictions = predictions;
+
+        predictions.forEach((prediction, index) => {
+          const $predictionItem = $(`
+            <div class="prediction-item" data-place-id="${prediction.place_id}" data-index="${index}">
+              <span class="main-text p13">${prediction.structured_formatting.main_text}</span>
+              <span class="secondarytext p13 text-color-content-tertiary">${prediction.structured_formatting.secondary_text}</span>
+            </div>
+          `);
+
+          $predictionsList.append($predictionItem);
+        });
+
+        $predictionsList.removeClass('hidden');
+      } else {
+        $predictionsList.addClass('hidden');
+      }
+    }
+
+    function highlightPrediction(index) {
+      const $items = $predictionsList.find('.prediction-item');
+      if ($items.length === 0) return;
+
+      if (index >= $items.length) {
+        index = 0;
+      } else if (index < 0) {
+        index = $items.length - 1;
+      }
+
+      $items.removeClass('selected');
+      const $selected = $items.eq(index).addClass('selected');
+      selectedIndex = index;
+      placeId = $selected.data('place-id');
+    }
+
+    function selectPrediction(index) {
+      const $items = $predictionsList.find('.prediction-item');
+      if ($items.length === 0) return;
+
+      if (index >= $items.length) {
+        index = 0;
+      } else if (index < 0) {
+        index = $items.length - 1;
+      }
+
+      $items.removeClass('selected');
+      const $selected = $items.eq(index).addClass('selected');
+      selectedIndex = index;
+      placeId = $selected.data('place-id');
+    }
+
+    function handlePlaceSelection(selectedPlaceId) {
+      if (selectedPlaceId && placesService) {
+        placesService.getDetails({ placeId: selectedPlaceId }, (place, status) => {
+          if (status === google.maps.places.PlacesServiceStatus.OK) {
+            $input.val(place.name);
+            $predictionsList.addClass('hidden');
+            toggleValidationMsg($input, false);
+
+            if (hasForm) {
+              setGooglePlaceDataToForm(place);
+              setItem('hotel-value', place.name);
+              setItem(restaurantObject, place);
+            }
+
+            if (shouldRedirect) {
+              redirectToGrader(selectedPlaceId);
+            }
+          }
+        });
+      }
+    }
+
+    function handleEnterKey() {
+      const $selected = $predictionsList.find('.prediction-item.selected');
+      if ($selected.length) {
+        placeId = $selected.data('place-id');
+        handlePlaceSelection(placeId);
+        return true;
+      }
+      return false;
+    }
+
+    let debounceTimer;
+
+    $input.on('input', function () {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        handleInput($(this).val());
+      }, 300);
     });
 
-    if (isValid) {
-      setInputElementValue('page_url', window.location.pathname);
-      fillHubSpot(wfForm, hsForm, inputMapping);
-      handleHubspotForm(hsForm);
-    }
+    $input.on('keydown', function (e) {
+      const keyCode = e.which;
+
+      if (keyCode === 13 && placeId) {
+        e.preventDefault();
+        handlePlaceSelection(placeId);
+        return false;
+      }
+
+      if (!$predictionsList.hasClass('hidden')) {
+        switch (keyCode) {
+          case 38:
+            e.preventDefault();
+            selectPrediction(selectedIndex - 1);
+            break;
+          case 40:
+            e.preventDefault();
+            selectPrediction(selectedIndex + 1);
+            break;
+          case 13:
+            e.preventDefault();
+            handleEnterKey();
+            break;
+          case 27:
+            e.preventDefault();
+            $predictionsList.addClass('hidden');
+            break;
+          case 9:
+            if (selectedIndex >= 0) {
+              e.preventDefault();
+              const $selected = $predictionsList.find('.prediction-item.selected');
+              if ($selected.length) {
+                placeId = $selected.data('place-id');
+                handlePlaceSelection(placeId);
+              }
+            }
+            break;
+        }
+      }
+    });
+
+    $predictionsList.on('click', '.prediction-item', function () {
+      placeId = $(this).data('place-id');
+      toggleValidationMsg($input, false);
+      handlePlaceSelection(placeId);
+    });
+
+    $predictionsList.on('mouseenter', '.prediction-item', function () {
+      selectedIndex = parseInt($(this).data('index'), 10);
+      $predictionsList.find('.prediction-item').removeClass('selected');
+      $(this).addClass('selected');
+    });
+
+    $(document).on('click', function (event) {
+      if (!$(event.target).closest($predictionsList).length && !$(event.target).is($input)) {
+        $predictionsList.addClass('hidden');
+      }
+    });
+
+    $input.on('change', function () {
+      const plainTextValue = $input.val();
+      if (!placeId && hasForm) {
+        localStorage.removeItem('hotel-value');
+        localStorage.removeItem(restaurantObject);
+        $('input[type="hidden"]').val('');
+        $('input[name="name"]').val(plainTextValue);
+      }
+    });
+
+    initializeServices();
   });
-});
+};
+
+export {
+  checkIfRestaurant,
+  initGooglePlaceAutocomplete,
+  restaurantObject,
+  setGooglePlaceDataToForm,
+};

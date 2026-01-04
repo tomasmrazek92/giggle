@@ -47,7 +47,54 @@ $('.navbar_menu-button').on('click', function () {
 
 // --- Swipers
 const swiperInstances = [
-  ['.hp-reviews', '.hp-reviews_wrap', 'reviews', { slidesPerView: 1, spaceBetween: 48 }, 'mobile'],
+  [
+    '.slider-wrapper.is-hp',
+    '.swiper.swiper-hp',
+    'hero',
+    {
+      slidesPerView: 1,
+      loopAdditionalSlides: 3,
+      centeredSlides: true,
+      spaceBetween: 48,
+      on: {
+        afterInit: (swiper) => {
+          $('.swiper-slide.hp-slide').clone().appendTo('.swiper-wrapper.is-hp');
+          swiper.update();
+        },
+      },
+      loop: true,
+    },
+    'all',
+  ],
+  [
+    '.hp-data_card.is-13',
+    '.hp-data_card-slider',
+    'data-card',
+    {
+      slidesPerView: 1,
+      loop: true,
+      spaceBetween: 0,
+      loop: true,
+      pagination: {
+        el: '.hp-data_card-slider-pagination',
+        type: 'bullets',
+        bulletClass: 'hp-data_card-slider-dot',
+        bulletActiveClass: 'is-active',
+        clickable: true,
+      },
+    },
+    'all',
+  ],
+  [
+    '.hp-qaa_wrap',
+    '.swiper.swiper-qaa',
+    'questions',
+    {
+      slidesPerView: 'auto',
+      spaceBetween: 64,
+    },
+    'all',
+  ],
 ];
 
 // Initialize swipers with instances specific to this page
