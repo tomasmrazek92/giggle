@@ -1,7 +1,10 @@
 import { initGlobalParallax } from './utils/parallax';
+import { countries } from './utils/countries';
+import { initModalBasic } from './modal';
 
 $(document).ready(function () {
   initGlobalParallax();
+  initModalBasic();
 
   function animateIcon(icons) {
     let paths = $(icons).find('path');
@@ -72,4 +75,69 @@ $(document).ready(function () {
   $('[data-icon-draw]').each(function () {
     animateIcon($(this));
   });
+});
+
+// Country Selection
+$(document).ready(function () {
+  const selectElement = $('#country');
+
+  function createCountryOptions(countries) {
+    const priorityCountries = ['Germany', 'Austria', 'Switzerland'];
+
+    const priority = countries
+      .filter((country) => priorityCountries.includes(country.Name))
+      .sort((a, b) => priorityCountries.indexOf(a.Name) - priorityCountries.indexOf(b.Name));
+
+    const remaining = countries
+      .filter((country) => !priorityCountries.includes(country.Name))
+      .sort((a, b) => a.Name.localeCompare(b.Name));
+
+    const sortedCountries = [...priority, ...remaining];
+
+    return sortedCountries.map((country, index) => {
+      const option = document.createElement('option');
+      option.value = country.Name;
+      option.textContent = country.Name;
+      option.setAttribute('data-code', country.Code);
+      if (country.Name === 'Germany') {
+        option.selected = true;
+      }
+      return option;
+    });
+  }
+
+  selectElement.empty();
+
+  const countryOptions = createCountryOptions(countries);
+  countryOptions.forEach((option) => selectElement.append(option));
+
+  if (!selectElement.val()) {
+    selectElement.val('Germany');
+  }
+
+  /*
+  $('select').niceSelect();
+
+  const countryNiceSelect = selectElement.next('.nice-select');
+  if (countryNiceSelect.length) {
+    countryNiceSelect.find('.current').text('Germany').css('color', 'white');
+    countryNiceSelect.find('li[data-value="Germany"]').addClass('selected');
+    countryNiceSelect.find('li[data-value=""]').remove();
+  }
+
+  $('.nice-select li').on('click', function () {
+    var niceSelect = $(this).closest('.nice-select');
+    niceSelect.find('.current').css('color', 'white');
+    niceSelect.removeClass('open');
+    niceSelect.find('.list').removeClass('open');
+  });
+
+  $(document).on('click', '.nice-select li', function () {
+    var niceSelect = $(this).closest('.nice-select');
+    setTimeout(function () {
+      niceSelect.removeClass('open');
+      niceSelect.find('.list').removeClass('open');
+    }, 100);
+  });
+  */
 });

@@ -106,16 +106,16 @@ const initGooglePlaceAutocomplete = () => {
   $('input[name="hotel-name"]').each(function () {
     const $input = $(this);
     const $predictionsList = $('.predictions-container');
-    const redirectTarget = $('[data-hotel-redirect="target"]');
+    const redirect = $input.attr('data-redirect');
 
     if (!$predictionsList.length) return;
 
-    const shouldRedirect = redirectTarget.length;
+    const shouldRedirect = redirect.length;
 
     function redirectToGrader(placeId) {
       if (!shouldRedirect || !placeId) return;
 
-      let redirectUrl = `${redirectTarget.attr('href')}?placeid=${placeId}`;
+      let redirectUrl = `${redirect}?placeid=${placeId}`;
 
       let utmParams;
       try {
@@ -136,7 +136,7 @@ const initGooglePlaceAutocomplete = () => {
         }
       }
 
-      alert(redirectUrl);
+      window.location.href = redirectUrl;
     }
 
     function initializeServices() {

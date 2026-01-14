@@ -18,28 +18,6 @@ $('.navbar').each(function () {
       scrub: 1,
     },
   });
-
-  mainParallax.fromTo(
-    $('.navbar_pattern'),
-    {
-      rotation: 0,
-      transformOrigin: 'left 50%',
-    },
-    {
-      rotation: -30,
-      transformOrigin: '0% 100%',
-    }
-  );
-  mainParallax.fromTo(
-    $('.navbar_symbol'),
-    {
-      opacity: 0,
-    },
-    {
-      opacity: 1,
-    },
-    '<'
-  );
 });
 $('.navbar_menu-button').on('click', function () {
   disableScroll();
@@ -74,7 +52,6 @@ const swiperInstances = [
       slidesPerView: 1,
       loop: true,
       spaceBetween: 0,
-      loop: true,
       pagination: {
         el: '.hp-data_card-slider-pagination',
         type: 'bullets',
@@ -91,9 +68,39 @@ const swiperInstances = [
     'questions',
     {
       slidesPerView: 'auto',
-      spaceBetween: 64,
+      breakpoints: {
+        0: {
+          spaceBetween: 16,
+        },
+        480: {
+          spaceBetween: 32,
+        },
+        992: {
+          spaceBetween: 64,
+        },
+      },
     },
     'all',
+  ],
+  [
+    '.clients-wrap',
+    '.hp-reviews_wrap',
+    'questions',
+    {
+      slidesPerView: 'auto',
+      breakpoints: {
+        0: {
+          spaceBetween: 16,
+        },
+        480: {
+          spaceBetween: 32,
+        },
+        992: {
+          spaceBetween: 64,
+        },
+      },
+    },
+    'mobile',
   ],
 ];
 

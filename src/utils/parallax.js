@@ -23,11 +23,24 @@ export function initGlobalParallax() {
             return;
           }
 
+          // Optional: Swtich the direction of the parallax if necessary
+          const switchDir = trigger.getAttribute('data-parallax-switch');
+
           // Optional: you can target an element inside a trigger if necessary
           const target = trigger.querySelector('[data-parallax="target"]') || trigger;
 
           // Get the direction value to decide between xPercent or yPercent tween
-          const direction = trigger.getAttribute('data-parallax-direction') || 'vertical';
+          // replace your direction / prop block with this
+          let direction = trigger.getAttribute('data-parallax-direction') || 'vertical';
+
+          if (
+            (switchDir === 'mobile' && isMobile) ||
+            (switchDir === 'mobileLandscape' && isMobileLandscape) ||
+            (switchDir === 'tablet' && isTablet)
+          ) {
+            direction = direction === 'horizontal' ? 'vertical' : 'horizontal';
+          }
+
           const prop = direction === 'horizontal' ? 'xPercent' : 'yPercent';
 
           // Get the scrub value, our default is 'true' because that feels nice with Lenis
@@ -45,8 +58,6 @@ export function initGlobalParallax() {
           // Get the start value of the ScrollTrigger
           const scrollStartRaw = trigger.getAttribute('data-parallax-scroll-start') || 'top bottom';
           const scrollStart = scrollStartRaw;
-
-          console.log(scrollStart);
 
           // Get the end value of the ScrollTrigger
           const scrollEndRaw = trigger.getAttribute('data-parallax-scroll-end') || 'bottom top';
