@@ -4,84 +4,89 @@ import { initGlobalParallax } from './utils/parallax';
 gsap.registerPlugin(SplitText, ScrollTrigger);
 
 function initLoopingCards() {
-  let animation;
+  let mm = gsap.matchMedia();
 
-  function init() {
-    const wrapper = $('[data-card-carousel="wrapper"]');
-    const items = $('[data-card-carousel="item"]');
+  mm.add('(min-width: 992px)', () => {
+    let animation;
 
-    if (animation) {
-      animation.kill();
-      gsap.killTweensOf(wrapper);
-      gsap.killTweensOf('[data-card-carousel="item"]');
+    function init() {
+      const wrapper = $('[data-card-carousel="wrapper"]');
+      const items = $('[data-card-carousel="item"]');
+
+      if (animation) {
+        animation.kill();
+        gsap.killTweensOf(wrapper);
+        gsap.killTweensOf('[data-card-carousel="item"]');
+      }
+
+      wrapper.find('[data-card-carousel="item"]:gt(' + (items.length - 1) + ')').remove();
+
+      items.clone().appendTo(wrapper);
+
+      const allItems = wrapper.find('[data-card-carousel="item"]');
+      gsap.set(allItems, { scale: 1, opacity: 1 });
+
+      const itemHeight = items.first().outerHeight(true);
+      const gap =
+        parseFloat(wrapper.css('grid-row-gap')) || parseFloat(wrapper.css('row-gap')) || 0;
+      const moveDistance = itemHeight + gap;
+      const totalItems = items.length;
+      const duration = 3;
+      let currentIndex = 0;
+
+      gsap.set(wrapper, { y: 0 });
+
+      function animateCarousel() {
+        const targetItem = allItems.eq(currentIndex);
+
+        animation = gsap.timeline({
+          onComplete: function () {
+            const currentY = gsap.getProperty(wrapper[0], 'y');
+
+            if (Math.abs(currentY) >= moveDistance * totalItems) {
+              gsap.set(wrapper, { y: 0 });
+              gsap.set(allItems, { scale: 1, opacity: 1 });
+              currentIndex = 0;
+            } else {
+              currentIndex++;
+            }
+
+            gsap.delayedCall(duration, animateCarousel);
+          },
+        });
+
+        animation.to(
+          wrapper,
+          {
+            y: `-=${moveDistance}`,
+            duration: 1.2,
+            ease: 'power3.inOut',
+          },
+          0
+        );
+
+        animation.to(
+          targetItem,
+          {
+            scale: 0.8,
+            opacity: 0,
+            duration: 1.2,
+            ease: 'power3.inOut',
+          },
+          0
+        );
+      }
+
+      gsap.delayedCall(duration, animateCarousel);
     }
 
-    wrapper.find('[data-card-carousel="item"]:gt(' + (items.length - 1) + ')').remove();
+    init();
 
-    items.clone().appendTo(wrapper);
-
-    const allItems = wrapper.find('[data-card-carousel="item"]');
-    gsap.set(allItems, { scale: 1, opacity: 1 });
-
-    const itemHeight = items.first().outerHeight(true);
-    const gap = parseFloat(wrapper.css('grid-row-gap')) || parseFloat(wrapper.css('row-gap')) || 0;
-    const moveDistance = itemHeight + gap;
-    const totalItems = items.length;
-    const duration = 3;
-    let currentIndex = 0;
-
-    gsap.set(wrapper, { y: 0 });
-
-    function animateCarousel() {
-      const targetItem = allItems.eq(currentIndex);
-
-      animation = gsap.timeline({
-        onComplete: function () {
-          const currentY = gsap.getProperty(wrapper[0], 'y');
-
-          if (Math.abs(currentY) >= moveDistance * totalItems) {
-            gsap.set(wrapper, { y: 0 });
-            gsap.set(allItems, { scale: 1, opacity: 1 });
-            currentIndex = 0;
-          } else {
-            currentIndex++;
-          }
-
-          gsap.delayedCall(duration, animateCarousel);
-        },
-      });
-
-      animation.to(
-        wrapper,
-        {
-          y: `-=${moveDistance}`,
-          duration: 1.2,
-          ease: 'power3.inOut',
-        },
-        0
-      );
-
-      animation.to(
-        targetItem,
-        {
-          scale: 0.8,
-          opacity: 0,
-          duration: 1.2,
-          ease: 'power3.inOut',
-        },
-        0
-      );
-    }
-
-    gsap.delayedCall(duration, animateCarousel);
-  }
-
-  init();
-
-  let resizeTimer;
-  $(window).on('resize', function () {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(init, 250);
+    let resizeTimer;
+    $(window).on('resize', function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(init, 250);
+    });
   });
 }
 
