@@ -18,11 +18,11 @@ $(document).ready(() => {
 
   let hbstID;
 
-  const isEnglishPath = window.location.pathname.includes('/en');
+  const isGermanPath = window.location.pathname.includes('/de');
 
-  hbstID = isEnglishPath
-    ? 'b52a0567-ff57-44e8-882c-018c0174fd5c' // EN
-    : '63e8d382-d758-406b-91ad-6ee8aa2b2f93'; // DE
+  hbstID = isGermanPath
+    ? '63e8d382-d758-406b-91ad-6ee8aa2b2f93' // DE
+    : 'b52a0567-ff57-44e8-882c-018c0174fd5c'; // EN
 
   // console.log(hbstID);
 
