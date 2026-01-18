@@ -110,7 +110,7 @@ const initGooglePlaceAutocomplete = () => {
 
     if (!$predictionsList.length) return;
 
-    const shouldRedirect = redirect.length;
+    const shouldRedirect = redirect && redirect !== '';
 
     function redirectToGrader(placeId) {
       if (!shouldRedirect || !placeId) return;

@@ -18,28 +18,11 @@ $(document).ready(() => {
 
   let hbstID;
 
-  const url = window.location.href;
-  const isStartDomain =
-    url.includes('https://start.giggle.tips/') || url.includes('https://giggle-lp-new.webflow.io/');
-  const isHotelDomain =
-    url.includes('https://hotel.giggle.tips/') || url.includes('https://giggle-new.webflow.io/');
   const isEnglishPath = window.location.pathname.includes('/en');
 
-  if (isStartDomain) {
-    if (typeof isDl !== 'undefined' && isDl === true) {
-      hbstID = 'b202ae0b-837f-47a5-8206-1e194f832f55'; // DE
-    } else {
-      // Start
-      hbstID = isEnglishPath
-        ? 'a11bc6c9-2078-4d9f-a48f-423b9a14d849' // EN
-        : '15d2b3b0-0cf0-4219-aab3-eb433ad8c58f'; // DE
-    }
-  } else if (isHotelDomain) {
-    // Hotel
-    hbstID = isEnglishPath
-      ? 'b52a0567-ff57-44e8-882c-018c0174fd5c' // EN
-      : '63e8d382-d758-406b-91ad-6ee8aa2b2f93'; // DE
-  }
+  bstID = isEnglishPath
+    ? 'b52a0567-ff57-44e8-882c-018c0174fd5c' // EN
+    : '63e8d382-d758-406b-91ad-6ee8aa2b2f93'; // DE
 
   // console.log(hbstID);
 
