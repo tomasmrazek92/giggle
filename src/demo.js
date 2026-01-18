@@ -20,7 +20,7 @@ $(document).ready(() => {
 
   const isEnglishPath = window.location.pathname.includes('/en');
 
-  bstID = isEnglishPath
+  hbstID = isEnglishPath
     ? 'b52a0567-ff57-44e8-882c-018c0174fd5c' // EN
     : '63e8d382-d758-406b-91ad-6ee8aa2b2f93'; // DE
 
