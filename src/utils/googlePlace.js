@@ -107,6 +107,7 @@ const initGooglePlaceAutocomplete = () => {
     const $input = $(this);
     const $predictionsList = $('.predictions-container');
     const redirect = $input.attr('data-redirect');
+    const germanLang = window.location.pathname.includes('/de');
 
     if (!$predictionsList.length) return;
 
@@ -115,7 +116,7 @@ const initGooglePlaceAutocomplete = () => {
     function redirectToGrader(placeId) {
       if (!shouldRedirect || !placeId) return;
 
-      let redirectUrl = `${redirect}?placeid=${placeId}`;
+      let redirectUrl = `${redirect}?placeid=${placeId}&lang=${germanLang ? '2' : '1'}`;
 
       let utmParams;
       try {
@@ -357,6 +358,7 @@ const initGooglePlaceAutocomplete = () => {
       }
     });
 
+    console.log(placeId);
     initializeServices();
   });
 };
