@@ -13,18 +13,16 @@ $(document).ready(() => {
   initGooglePlaceAutocomplete();
 
   // -- Forms
-  let wfForm = $('#demo-form');
+  const wfForm = $('#demo-form');
   let hsForm;
-
-  let hbstID;
 
   const isGermanPath = window.location.pathname.includes('/de');
 
-  hbstID = isGermanPath
-    ? '63e8d382-d758-406b-91ad-6ee8aa2b2f93' // DE
-    : 'b52a0567-ff57-44e8-882c-018c0174fd5c'; // EN
-
-  // console.log(hbstID);
+  const hbstID =
+    wfForm.attr('hbst-id') ||
+    (isGermanPath
+      ? '63e8d382-d758-406b-91ad-6ee8aa2b2f93' // DE
+      : 'b52a0567-ff57-44e8-882c-018c0174fd5c'); // EN
 
   // Initialize the HubSpot form
   hbspt.forms.create({
